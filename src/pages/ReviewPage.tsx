@@ -1,4 +1,8 @@
-import { FormEvent, useState } from "react"
+import { useState } from "react"
+import type {
+  ChangeEvent,
+  FormEvent,
+} from "react"
 import { useNavigate } from "react-router-dom"
 import { motion } from "motion/react"
 
@@ -14,24 +18,40 @@ function ReviewPage() {
     message: "",
   })
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-  const [error, setError] = useState("")
+  const [isSubmitting, setIsSubmitting] =
+    useState(false)
+
+  const [submitted, setSubmitted] =
+    useState(false)
+
+  const [error, setError] =
+    useState("")
 
   function handleChange(
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement
+    e: ChangeEvent<
+      HTMLInputElement |
+      HTMLTextAreaElement |
+      HTMLSelectElement
     >
   ) {
-    const { name, value } = e.target
+    const {
+      name,
+      value,
+    } = e.target
 
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "rating" ? Number(value) : value,
+
+      [name]:
+        name === "rating"
+          ? Number(value)
+          : value,
     }))
   }
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    e: FormEvent<HTMLFormElement>
+  ) {
     e.preventDefault()
 
     setError("")
@@ -51,10 +71,15 @@ function ReviewPage() {
       })
 
       setTimeout(() => {
-        navigate("/", { replace: true })
+        navigate("/", {
+          replace: true,
+        })
       }, 2000)
     } catch (error) {
-      console.error("Submit review error:", error)
+      console.error(
+        "Submit review error:",
+        error
+      )
 
       setError(
         error instanceof Error
@@ -69,11 +94,23 @@ function ReviewPage() {
   return (
     <main className="min-h-screen bg-slate-950 px-6 py-20 text-white">
       <div className="mx-auto max-w-2xl">
-        {/* Header */}
+
+        {/* ==================================================
+            HEADER
+        ================================================== */}
+
         <motion.div
-          initial={{ opacity: 0, y: 25 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          initial={{
+            opacity: 0,
+            y: 25,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.5,
+          }}
           className="mb-10 text-center"
         >
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-blue-400">
@@ -91,15 +128,31 @@ function ReviewPage() {
           </p>
         </motion.div>
 
-        {/* Form */}
+        {/* ==================================================
+            FORM
+        ================================================== */}
+
         <motion.form
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          initial={{
+            opacity: 0,
+            y: 30,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.6,
+            delay: 0.1,
+          }}
           onSubmit={handleSubmit}
           className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-2xl sm:p-8"
         >
-          {/* Client Name */}
+
+          {/* ==================================================
+              CLIENT NAME
+          ================================================== */}
+
           <div>
             <label
               htmlFor="clientName"
@@ -121,7 +174,10 @@ function ReviewPage() {
             />
           </div>
 
-          {/* Client Role */}
+          {/* ==================================================
+              CLIENT ROLE
+          ================================================== */}
+
           <div className="mt-5">
             <label
               htmlFor="clientRole"
@@ -142,7 +198,10 @@ function ReviewPage() {
             />
           </div>
 
-          {/* Rating */}
+          {/* ==================================================
+              RATING
+          ================================================== */}
+
           <div className="mt-5">
             <label
               htmlFor="rating"
@@ -158,15 +217,32 @@ function ReviewPage() {
               onChange={handleChange}
               className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-blue-500"
             >
-              <option value={5}>★★★★★ — Excellent</option>
-              <option value={4}>★★★★☆ — Very Good</option>
-              <option value={3}>★★★☆☆ — Good</option>
-              <option value={2}>★★☆☆☆ — Fair</option>
-              <option value={1}>★☆☆☆☆ — Poor</option>
+              <option value={5}>
+                ★★★★★ — Excellent
+              </option>
+
+              <option value={4}>
+                ★★★★☆ — Very Good
+              </option>
+
+              <option value={3}>
+                ★★★☆☆ — Good
+              </option>
+
+              <option value={2}>
+                ★★☆☆☆ — Fair
+              </option>
+
+              <option value={1}>
+                ★☆☆☆☆ — Poor
+              </option>
             </select>
           </div>
 
-          {/* Message */}
+          {/* ==================================================
+              MESSAGE
+          ================================================== */}
+
           <div className="mt-5">
             <label
               htmlFor="message"
@@ -192,14 +268,20 @@ function ReviewPage() {
             </div>
           </div>
 
-          {/* Error */}
+          {/* ==================================================
+              ERROR
+          ================================================== */}
+
           {error && (
             <div className="mt-5 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
               {error}
             </div>
           )}
 
-          {/* Success */}
+          {/* ==================================================
+              SUCCESS
+          ================================================== */}
+
           {submitted && (
             <div className="mt-5 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-400">
               Thank you! Your review has been submitted.
@@ -207,18 +289,30 @@ function ReviewPage() {
             </div>
           )}
 
-          {/* Submit */}
+          {/* ==================================================
+              SUBMIT BUTTON
+          ================================================== */}
+
           <motion.button
             type="submit"
             disabled={isSubmitting}
-            whileHover={{ y: -2 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{
+              y: -2,
+            }}
+            whileTap={{
+              scale: 0.98,
+            }}
             className="mt-6 flex w-full items-center justify-center rounded-xl bg-white px-5 py-3 font-semibold text-slate-950 transition hover:bg-blue-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isSubmitting ? "Submitting..." : "Submit Review →"}
+            {isSubmitting
+              ? "Submitting..."
+              : "Submit Review →"}
           </motion.button>
 
-          {/* Back */}
+          {/* ==================================================
+              BACK BUTTON
+          ================================================== */}
+
           <button
             type="button"
             onClick={() => navigate("/")}
@@ -226,6 +320,7 @@ function ReviewPage() {
           >
             ← Back to Portfolio
           </button>
+
         </motion.form>
       </div>
     </main>

@@ -1,13 +1,20 @@
 import { useEffect, useState } from "react"
 import { motion } from "motion/react"
+import type { Variants } from "motion/react"
+
 import { getReviews } from "../services/api"
 import type { Review } from "../types"
 
-const cardVariants = {
+/* ======================================================
+   ANIMATION VARIANTS
+====================================================== */
+
+const cardVariants: Variants = {
   hidden: {
     opacity: 0,
     y: 35,
   },
+
   visible: {
     opacity: 1,
     y: 0,
@@ -18,10 +25,28 @@ const cardVariants = {
   },
 }
 
+const reviewGridVariants: Variants = {
+  hidden: {},
+
+  visible: {
+    transition: {
+      staggerChildren: 0.12,
+    },
+  },
+}
+
+/* ======================================================
+   COMPONENT
+====================================================== */
+
 function Testimonials() {
   const [reviews, setReviews] = useState<Review[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
+
+  /* ====================================================
+     FETCH REVIEWS
+  ==================================================== */
 
   useEffect(() => {
     async function fetchReviews() {
@@ -30,7 +55,10 @@ function Testimonials() {
 
         setReviews(data.reviews)
       } catch (error) {
-        console.error("Fetch reviews error:", error)
+        console.error(
+          "Fetch reviews error:",
+          error
+        )
 
         setError(
           error instanceof Error
@@ -45,6 +73,10 @@ function Testimonials() {
     fetchReviews()
   }, [])
 
+  /* ====================================================
+     RENDER
+  ==================================================== */
+
   return (
     <section
       id="testimonials"
@@ -52,7 +84,10 @@ function Testimonials() {
     >
       <div className="mx-auto max-w-7xl">
 
-        {/* Section Header */}
+        {/* ==================================================
+            SECTION HEADER
+        ================================================== */}
+
         <motion.div
           className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between"
           initial={{
@@ -85,6 +120,7 @@ function Testimonials() {
             </p>
           </div>
 
+          {/* Leave Review */}
           <motion.a
             href="/review"
             whileHover={{
@@ -109,41 +145,55 @@ function Testimonials() {
           </motion.a>
         </motion.div>
 
-        {/* Loading */}
+        {/* ==================================================
+            LOADING STATE
+        ================================================== */}
+
         {isLoading && (
           <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 3 }).map((_, index) => (
-              <div
-                key={index}
-                className="rounded-2xl border border-white/10 bg-white/5 p-6"
-              >
-                <div className="flex gap-1">
-                  {Array.from({ length: 5 }).map(
-                    (_, starIndex) => (
-                      <div
-                        key={starIndex}
-                        className="h-5 w-5 animate-pulse rounded bg-white/10"
-                      />
-                    )
-                  )}
-                </div>
+            {Array.from({ length: 3 }).map(
+              (_, index) => (
+                <div
+                  key={index}
+                  className="rounded-2xl border border-white/10 bg-white/5 p-6"
+                >
+                  {/* Stars */}
+                  <div className="flex gap-1">
+                    {Array.from({ length: 5 }).map(
+                      (_, starIndex) => (
+                        <div
+                          key={starIndex}
+                          className="h-5 w-5 animate-pulse rounded bg-white/10"
+                        />
+                      )
+                    )}
+                  </div>
 
-                <div className="mt-6 space-y-3">
-                  <div className="h-4 w-full animate-pulse rounded bg-white/10" />
-                  <div className="h-4 w-5/6 animate-pulse rounded bg-white/10" />
-                  <div className="h-4 w-2/3 animate-pulse rounded bg-white/10" />
-                </div>
+                  {/* Message */}
+                  <div className="mt-6 space-y-3">
+                    <div className="h-4 w-full animate-pulse rounded bg-white/10" />
 
-                <div className="mt-7 border-t border-white/10 pt-5">
-                  <div className="h-4 w-32 animate-pulse rounded bg-white/10" />
-                  <div className="mt-2 h-3 w-24 animate-pulse rounded bg-white/10" />
+                    <div className="h-4 w-5/6 animate-pulse rounded bg-white/10" />
+
+                    <div className="h-4 w-2/3 animate-pulse rounded bg-white/10" />
+                  </div>
+
+                  {/* Client */}
+                  <div className="mt-7 border-t border-white/10 pt-5">
+                    <div className="h-4 w-32 animate-pulse rounded bg-white/10" />
+
+                    <div className="mt-2 h-3 w-24 animate-pulse rounded bg-white/10" />
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            )}
           </div>
         )}
 
-        {/* Error */}
+        {/* ==================================================
+            ERROR STATE
+        ================================================== */}
+
         {!isLoading && error && (
           <motion.div
             className="mt-12 rounded-2xl border border-red-500/20 bg-red-500/10 p-8 text-center"
@@ -166,7 +216,10 @@ function Testimonials() {
           </motion.div>
         )}
 
-        {/* Empty State */}
+        {/* ==================================================
+            EMPTY STATE
+        ================================================== */}
+
         {!isLoading &&
           !error &&
           reviews.length === 0 && (
@@ -208,7 +261,10 @@ function Testimonials() {
             </motion.div>
           )}
 
-        {/* Reviews */}
+        {/* ==================================================
+            REVIEWS
+        ================================================== */}
+
         {!isLoading &&
           !error &&
           reviews.length > 0 && (
@@ -220,14 +276,7 @@ function Testimonials() {
                 once: true,
                 amount: 0.1,
               }}
-              variants={{
-                hidden: {},
-                visible: {
-                  transition: {
-                    staggerChildren: 0.12,
-                  },
-                },
-              }}
+              variants={reviewGridVariants}
             >
               {reviews.map((review) => (
                 <motion.article
@@ -245,7 +294,7 @@ function Testimonials() {
                 >
                   {/* Decorative Quote */}
                   <div
-                    className="pointer-events-none absolute right-5 top-3 text-6xl font-serif leading-none text-white[0.04]"
+                    className="pointer-events-none absolute right-5 top-3 text-6xl font-serif leading-none text-white/[0.04]"
                     aria-hidden="true"
                   >
                     "
@@ -294,18 +343,21 @@ function Testimonials() {
 
                   {/* Review Message */}
                   <p className="mt-5 flex-1 text-sm leading-7 text-slate-300">
-                    "{review.message}"
+                    &quot;{review.message}&quot;
                   </p>
 
                   {/* Client */}
                   <div className="mt-7 border-t border-white/10 pt-5">
                     <div className="flex items-center gap-3">
+
+                      {/* Avatar */}
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-sm font-bold uppercase text-blue-400">
                         {review.clientName
                           .charAt(0)
                           .toUpperCase()}
                       </div>
 
+                      {/* Client Details */}
                       <div className="min-w-0">
                         <p className="truncate font-semibold text-white">
                           {review.clientName}
@@ -317,12 +369,14 @@ function Testimonials() {
                           </p>
                         )}
                       </div>
+
                     </div>
                   </div>
                 </motion.article>
               ))}
             </motion.div>
           )}
+
       </div>
     </section>
   )

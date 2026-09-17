@@ -1,39 +1,59 @@
 import { useEffect, useMemo, useState } from "react"
 import { motion } from "motion/react"
+
 import ProjectCard from "./ProjectCard"
 import { getProjects } from "../services/api"
 import type { Project } from "../types"
 
+/* ======================================================
+   ANIMATION VARIANTS
+====================================================== */
 
-interface Project {
-  id: number
-  title: string
-  description: string
-  imageUrl: string | null
-  liveUrl: string | null
-  githubUrl: string | null
-  technologies: string
-  featured: boolean
-  createdAt: string
+const projectGridVariants = {
+  hidden: {},
+
+  visible: {
+    transition: {
+      staggerChildren: 0.12,
+    },
+  },
 }
 
-function Projects() {
-  const [projects, setProjects] = useState<Project[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState("")
+/* ======================================================
+   COMPONENT
+====================================================== */
 
-  const [searchTerm, setSearchTerm] = useState("")
+function Projects() {
+  const [projects, setProjects] =
+    useState<Project[]>([])
+
+  const [isLoading, setIsLoading] =
+    useState(true)
+
+  const [error, setError] =
+    useState("")
+
+  const [searchTerm, setSearchTerm] =
+    useState("")
+
   const [showFeaturedOnly, setShowFeaturedOnly] =
     useState(false)
+
+  /* ====================================================
+     FETCH PROJECTS
+  ==================================================== */
 
   useEffect(() => {
     async function fetchProjects() {
       try {
         const data = await getProjects()
 
-        setProjects(data.projects as Project[])
+        setProjects(data.projects)
       } catch (error) {
-        console.error("Fetch projects error:", error)
+        console.error(
+          "Fetch projects error:",
+          error
+        )
 
         setError(
           error instanceof Error
@@ -48,10 +68,15 @@ function Projects() {
     fetchProjects()
   }, [])
 
+  /* ====================================================
+     FILTER PROJECTS
+  ==================================================== */
+
   const filteredProjects = useMemo(() => {
-    const normalizedSearch = searchTerm
-      .trim()
-      .toLowerCase()
+    const normalizedSearch =
+      searchTerm
+        .trim()
+        .toLowerCase()
 
     return projects.filter((project) => {
       const matchesSearch =
@@ -67,11 +92,23 @@ function Projects() {
           .includes(normalizedSearch)
 
       const matchesFeatured =
-        !showFeaturedOnly || project.featured
+        !showFeaturedOnly ||
+        project.featured
 
-      return matchesSearch && matchesFeatured
+      return (
+        matchesSearch &&
+        matchesFeatured
+      )
     })
-  }, [projects, searchTerm, showFeaturedOnly])
+  }, [
+    projects,
+    searchTerm,
+    showFeaturedOnly,
+  ])
+
+  /* ====================================================
+     RENDER
+  ==================================================== */
 
   return (
     <section
@@ -80,7 +117,10 @@ function Projects() {
     >
       <div className="mx-auto max-w-7xl">
 
-        {/* Section Header */}
+        {/* ==================================================
+            SECTION HEADER
+        ================================================== */}
+
         <motion.div
           className="max-w-2xl"
           initial={{
@@ -113,7 +153,10 @@ function Projects() {
           </p>
         </motion.div>
 
-        {/* Search & Filter */}
+        {/* ==================================================
+            SEARCH & FILTER
+        ================================================== */}
+
         {!isLoading &&
           !error &&
           projects.length > 0 && (
@@ -148,7 +191,9 @@ function Projects() {
                   type="search"
                   value={searchTerm}
                   onChange={(event) =>
-                    setSearchTerm(event.target.value)
+                    setSearchTerm(
+                      event.target.value
+                    )
                   }
                   placeholder="Search projects..."
                   aria-label="Search projects"
@@ -161,7 +206,7 @@ function Projects() {
                 type="button"
                 onClick={() =>
                   setShowFeaturedOnly(
-                    !showFeaturedOnly
+                    (current) => !current
                   )
                 }
                 whileTap={{
@@ -180,55 +225,66 @@ function Projects() {
             </motion.div>
           )}
 
-        {/* Loading */}
+        {/* ==================================================
+            LOADING
+        ================================================== */}
+
         {isLoading && (
           <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 3 }).map(
-              (_, index) => (
-                <div
-                  key={index}
-                  className="overflow-hidden rounded-2xl border border-white/10 bg-white/5"
-                >
-                  <div className="aspect-video animate-pulse bg-white/10" />
+            {Array.from({
+              length: 3,
+            }).map((_, index) => (
+              <div
+                key={index}
+                className="overflow-hidden rounded-2xl border border-white/10 bg-white/5"
+              >
+                <div className="aspect-video animate-pulse bg-white/10" />
 
-                  <div className="space-y-4 p-6">
-                    <div className="h-6 w-2/3 animate-pulse rounded bg-white/10" />
+                <div className="space-y-4 p-6">
+                  <div className="h-6 w-2/3 animate-pulse rounded bg-white/10" />
 
-                    <div className="h-4 w-full animate-pulse rounded bg-white/10" />
+                  <div className="h-4 w-full animate-pulse rounded bg-white/10" />
 
-                    <div className="h-4 w-5/6 animate-pulse rounded bg-white/10" />
+                  <div className="h-4 w-5/6 animate-pulse rounded bg-white/10" />
 
-                    <div className="flex gap-2">
-                      <div className="h-6 w-16 animate-pulse rounded bg-white/10" />
-                      <div className="h-6 w-20 animate-pulse rounded bg-white/10" />
-                    </div>
+                  <div className="flex gap-2">
+                    <div className="h-6 w-16 animate-pulse rounded bg-white/10" />
+
+                    <div className="h-6 w-20 animate-pulse rounded bg-white/10" />
                   </div>
                 </div>
-              )
-            )}
+              </div>
+            ))}
           </div>
         )}
 
-        {/* Error */}
-        {!isLoading && error && (
-          <motion.div
-            className="mt-12 rounded-2xl border border-red-500/20 bg-red-500/10 p-8 text-center"
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-          >
-            <p className="text-red-400">
-              Unable to load projects right now.
-            </p>
-          </motion.div>
-        )}
+        {/* ==================================================
+            ERROR
+        ================================================== */}
 
-        {/* No Projects */}
+        {!isLoading &&
+          error && (
+            <motion.div
+              className="mt-12 rounded-2xl border border-red-500/20 bg-red-500/10 p-8 text-center"
+              initial={{
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+            >
+              <p className="text-red-400">
+                Unable to load projects right now.
+              </p>
+            </motion.div>
+          )}
+
+        {/* ==================================================
+            NO PROJECTS
+        ================================================== */}
+
         {!isLoading &&
           !error &&
           projects.length === 0 && (
@@ -239,7 +295,10 @@ function Projects() {
             </div>
           )}
 
-        {/* Filtered Empty State */}
+        {/* ==================================================
+            FILTERED EMPTY STATE
+        ================================================== */}
+
         {!isLoading &&
           !error &&
           projects.length > 0 &&
@@ -277,7 +336,10 @@ function Projects() {
             </motion.div>
           )}
 
-        {/* Projects */}
+        {/* ==================================================
+            PROJECTS
+        ================================================== */}
+
         {!isLoading &&
           !error &&
           filteredProjects.length > 0 && (
@@ -289,39 +351,48 @@ function Projects() {
                 once: true,
                 amount: 0.1,
               }}
-              variants={{
-                hidden: {},
-                visible: {
-                  transition: {
-                    staggerChildren: 0.12,
-                  },
-                },
-              }}
+              variants={projectGridVariants}
             >
-              {filteredProjects.map((project) => {
-                const technologies =
-                  project.technologies
-                    .split(",")
-                    .map((technology) =>
-                      technology.trim()
-                    )
-                    .filter(Boolean)
+              {filteredProjects.map(
+                (project) => {
+                  const technologies =
+                    project.technologies
+                      .split(",")
+                      .map(
+                        (technology) =>
+                          technology.trim()
+                      )
+                      .filter(Boolean)
 
-                return (
-                  <ProjectCard
-                    key={project.id}
-                    title={project.title}
-                    description={project.description}
-                    technologies={technologies}
-                    githubUrl={project.githubUrl}
-                    liveUrl={project.liveUrl}
-                    imageUrl={project.imageUrl}
-                    featured={project.featured}
-                  />
-                )
-              })}
+                  return (
+                    <ProjectCard
+                      key={project.id}
+                      title={project.title}
+                      description={
+                        project.description
+                      }
+                      technologies={
+                        technologies
+                      }
+                      githubUrl={
+                        project.githubUrl
+                      }
+                      liveUrl={
+                        project.liveUrl
+                      }
+                      imageUrl={
+                        project.imageUrl
+                      }
+                      featured={
+                        project.featured
+                      }
+                    />
+                  )
+                }
+              )}
             </motion.div>
           )}
+
       </div>
     </section>
   )

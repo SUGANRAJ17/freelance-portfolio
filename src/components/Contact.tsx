@@ -1,4 +1,5 @@
-import { FormEvent, useState } from "react"
+import { useState } from "react"
+import type { FormEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
 
 import { submitContactMessage } from "../services/api"
@@ -53,7 +54,9 @@ function Contact() {
     return /^[0-9]{10}$/.test(phone)
   }
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    e: FormEvent<HTMLFormElement>
+  ) {
     e.preventDefault()
 
     setError("")
@@ -92,7 +95,10 @@ function Contact() {
         message: "",
       })
     } catch (error) {
-      console.error("Submit contact message error:", error)
+      console.error(
+        "Submit contact message error:",
+        error
+      )
 
       setError(
         error instanceof Error
@@ -427,8 +433,16 @@ function Contact() {
             <motion.button
               type="submit"
               disabled={isSubmitting}
-              whileHover={!isSubmitting ? { y: -2 } : undefined}
-              whileTap={!isSubmitting ? { scale: 0.98 } : undefined}
+              whileHover={
+                !isSubmitting
+                  ? { y: -2 }
+                  : undefined
+              }
+              whileTap={
+                !isSubmitting
+                  ? { scale: 0.98 }
+                  : undefined
+              }
               className="mt-6 flex w-full items-center justify-center rounded-xl bg-white px-5 py-3 font-semibold text-slate-950 transition hover:bg-blue-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isSubmitting ? (
