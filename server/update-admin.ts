@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs"
 import { prisma } from "./lib/prisma.js"
 
 async function updateAdmin() {
-  const email = process.env.ADMIN_EMAIL
+  const email = process.env.ADMIN_EMAIL?.trim().toLowerCase()
   const password = process.env.ADMIN_PASSWORD
 
   if (!email || !password) {
@@ -14,21 +14,25 @@ async function updateAdmin() {
 
   const passwordHash = await bcrypt.hash(password, 12)
 
-  const admin = await prisma.admin.update({
+  const admin = await prisma.admin.upsert({
     where: {
-      email: email.trim().toLowerCase(),
+      email,
     },
-    data: {
+    update: {
+      passwordHash,
+    },
+    create: {
+      email,
       passwordHash,
     },
   })
 
-  console.log(`Admin password updated for: ${admin.email}`)
+  console.log(`Admin account ready for: ${admin.email}`)
 }
 
 updateAdmin()
   .catch((error) => {
-    console.error("Error updating admin:", error)
+    console.error("Error creating/updating admin:", error)
     process.exit(1)
   })
   .finally(async () => {
