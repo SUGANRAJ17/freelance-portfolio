@@ -186,11 +186,11 @@ function Contact() {
                 </p>
 
                 <a
-                  href="tel:9080922292"
+                  href="tel:9080922296"
                   className="mt-1 inline-flex items-center gap-2 text-slate-200 transition hover:text-blue-400"
                 >
                   <span>📞</span>
-                  <span>9080922292</span>
+                  <span>9080922296</span>
                 </a>
               </div>
 
