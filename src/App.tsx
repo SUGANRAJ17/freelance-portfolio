@@ -9,6 +9,7 @@ import Experience from "./components/Experience"
 import Testimonials from "./components/Testimonials"
 import Contact from "./components/Contact"
 import Footer from "./components/Footer"
+import WhatsAppButton from "./components/WhatsAppButton"
 
 import ReviewPage from "./pages/ReviewPage"
 
@@ -32,6 +33,8 @@ function Portfolio() {
       </main>
 
       <Footer />
+
+      <WhatsAppButton />
     </>
   )
 }
@@ -40,19 +43,12 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Portfolio */}
         <Route path="/" element={<Portfolio />} />
 
-        {/* Client Review Page */}
         <Route path="/review" element={<ReviewPage />} />
 
-        {/* Admin Login */}
-        <Route
-          path="/admin/login"
-          element={<AdminLogin />}
-        />
+        <Route path="/admin/login" element={<AdminLogin />} />
 
-        {/* Protected Admin Dashboard */}
         <Route
           path="/admin"
           element={
